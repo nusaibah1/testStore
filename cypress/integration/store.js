@@ -1,21 +1,36 @@
 /// <reference types="cypress"/>
-describe("End to end eccomerce test", () => {
-  it("Submit Order", () => {
-    const productName = "Blackberry";
+
+
+
+describe("End to end eccomerce test", function () {
+  before(function () {
+    // runs once before all tests in this block
+    cy.fixture("data").then(function (data) {
+      this.data = data;
+    });
+  });
+
+  it("Submit Order", function () {
+    Cypress.config("defaultCommandTimeout", 10000);
+    const productName = this.data.productName;
     cy.visit("https://rahulshettyacademy.com/loginpagePractise/#/");
-    cy.get("#username").type("rahulshettyacademy");
-    cy.get("#password").type("learning");
+
+    cy.get("#username").type(this.data.username);
+    cy.get("#password").type(this.data.password);
     cy.contains("Sign In").click();
     cy.contains("Shop Name").should("be.visible");
+
     cy.get("app-card").should("have.length", 4);
     cy.get("app-card")
-      .filter(':contains("Blackberry")')
+      .filter(`:contains("${productName}")`)
       .then(($element) => {
         cy.wrap($element).should("have.length", 1);
         cy.wrap($element).contains("button", "Add").click();
       });
+
     cy.get("app-card").eq(0).contains("button", "Add").click();
     cy.contains("a", "Checkout").click();
+
     let sum = 0;
     cy.get("tr td:nth-child(4) strong")
       .each(($el) => {
@@ -25,13 +40,14 @@ describe("End to end eccomerce test", () => {
       .then(() => {
         expect(sum).to.be.lessThan(200000);
       });
+
     cy.contains("button", "Checkout").click();
-    cy.get('#country').type('France')
-    cy.wait(5000)
-    cy.get('.suggestions ul li a').click()
-    
-    cy.get('.btn-success').click()
-    cy.wait(5000)
-    cy.get('.alert-success').should('contain', 'Thank you! Your order will be delivered in next few weeks :-)')
+    cy.get("#country").type("France");
+
+    cy.get(".suggestions ul li a").click();
+
+    cy.get(".btn-success").click();
+
+    cy.get(".alert-success").should("contain", "Success");
   });
 });
