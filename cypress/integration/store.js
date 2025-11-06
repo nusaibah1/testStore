@@ -16,7 +16,7 @@ describe("End to end eccomerce test", () => {
       });
     cy.get("app-card").eq(0).contains("button", "Add").click();
     cy.contains("a", "Checkout").click();
-    sum = 0;
+    let sum = 0;
     cy.get("tr td:nth-child(4) strong")
       .each(($el) => {
         const amount = Number($el.text().split(" ")[1].trim());
@@ -25,5 +25,13 @@ describe("End to end eccomerce test", () => {
       .then(() => {
         expect(sum).to.be.lessThan(200000);
       });
+    cy.contains("button", "Checkout").click();
+    cy.get('#country').type('France')
+    cy.wait(5000)
+    cy.get('.suggestions ul li a').click()
+    
+    cy.get('.btn-success').click()
+    cy.wait(5000)
+    cy.get('.alert-success').should('contain', 'Thank you! Your order will be delivered in next few weeks :-)')
   });
 });
