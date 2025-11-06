@@ -1,2 +1,2 @@
-# greenCheckout
-GreenKart Checkout test with Cypress
+# end to end test with cypress for test store
+
